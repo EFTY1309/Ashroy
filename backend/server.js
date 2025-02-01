@@ -2,6 +2,8 @@ import express from "express";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 import cors from "cors";
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 dotenv.config();
 
@@ -12,16 +14,58 @@ const port = 5000;
 app.use(express.json());
 app.use(cors({ origin: 'http://localhost:5173' })); // Allow frontend to communicate with backend
 
+// MongoDB connection
+mongoose.connect('mongodb+srv://efty3222:12345@user-service.ooe8u.mongodb.net/?retryWrites=true&w=majority&appName=user-service', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const UserSchema = new mongoose.Schema({
+  username: String,
+  email: String,
+  password: String,
+});
+
+const User = mongoose.model('User', UserSchema);
+
 // Initialize Google Generative AI
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-// Create a route to handle the user message
-app.post("/chat", async (req, res) => {
-  const { userMessage, metrics } = req.body; // Extract userMessage and metrics
+// Sign-up route
+app.post("/signup", async (req, res) => {
+  const { username, email, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-  console.log("Received user message:", userMessage); // Debugging
-  console.log("Received metrics:", metrics); // Debugging
+  const newUser = new User({ username, email, password: hashedPassword });
+  await newUser.save();
+
+  res.status(201).send('User created successfully');
+});
+
+// Sign-in route
+app.post("/signin", async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(400).send('User not found');
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return res.status(400).send('Invalid credentials');
+  }
+
+  res.status(200).send('Login successful');
+});
+
+// Chat route
+app.post("/chat", async (req, res) => {
+  const { userMessage, metrics } = req.body;
+
+  console.log("Received user message:", userMessage);
+  console.log("Received metrics:", metrics);
 
   try {
     const chat = model.startChat({
@@ -33,7 +77,6 @@ app.post("/chat", async (req, res) => {
 
     let prompt = userMessage;
 
-    // Use metrics to customize the prompt
     if (metrics) {
       if (metrics.mood !== null) {
         prompt += `\n\nUser's mood: ${metrics.mood}/10`;
@@ -46,9 +89,8 @@ app.post("/chat", async (req, res) => {
       }
     }
 
-    console.log("Sending prompt to AI:", prompt); // Debugging
+    console.log("Sending prompt to AI:", prompt);
 
-    // Send the prompt to the Google AI API
     const result = await chat.sendMessageStream(prompt);
 
     let aiResponse = "";
@@ -57,9 +99,8 @@ app.post("/chat", async (req, res) => {
       aiResponse += chunkText;
     }
 
-    console.log("AI response:", aiResponse); // Debugging
+    console.log("AI response:", aiResponse);
 
-    // Wrap the AI response in HTML tags
     const htmlResponse = `
       <html>
         <head>
@@ -73,7 +114,6 @@ app.post("/chat", async (req, res) => {
       </html>
     `;
 
-    // Return the HTML wrapped response to the frontend
     res.json({ message: htmlResponse });
   } catch (error) {
     console.error("Error:", error);

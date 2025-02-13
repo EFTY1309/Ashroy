@@ -107,11 +107,8 @@ graph TD
 
 ## Screenshots 🖼️
 
-[Add your screenshots here]
-
-- Dashboard
-- Metrics Input
-- Suggestions
+![Image](https://github.com/user-attachments/assets/14240d28-6a8a-4d0b-9b71-31502ffddadc)
+![Image](https://github.com/user-attachments/assets/0d22e3be-09c2-4e82-8cad-b44537387639)
 
 ## Contact 📧
 

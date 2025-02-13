@@ -112,6 +112,5 @@ graph TD
 
 ## Contact 📧
 
-- Email: your-email@example.com
-- GitHub: your-username
-- Project Link: [Ashroy](https://github.com/your-username/ashroy)
+- Email: bsse1303@iit.du.ac.bd
+- GitHub: 2753Farhan

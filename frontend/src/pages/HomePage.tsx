@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { MessageCircle, LineChart } from 'lucide-react';
+import { MessageCircle, LineChart, Star } from 'lucide-react';
 import { Link } from 'react-router-dom'; // Import Link for navigation
 
 const HomePage: React.FC = () => {
@@ -33,6 +33,13 @@ const HomePage: React.FC = () => {
           <p className="text-lg md:text-xl text-gray-200">
             Your AI-powered mental health companion
           </p>
+
+          {/* Tribute to July Heroes */}
+          <div className="bg-gradient-to-r from-blue-500 to-violet-500 p-2 rounded-lg">
+            <p className="text-white font-semibold text-sm md:text-base">
+              A Tribute to July Heroes
+            </p>
+          </div>
 
           {/* Feature cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12 mb-8">
@@ -77,6 +84,17 @@ const HomePage: React.FC = () => {
               >
                 <LineChart className="mr-2 h-5 w-5" />
                 Log Metrics
+              </Button>
+            </Link>
+
+            {/* Upgrade to Pro button */}
+            <Link to="http://localhost:3000">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-8"
+              >
+                <Star className="mr-2 h-5 w-5" />
+                Specialized Bot
               </Button>
             </Link>
           </div>

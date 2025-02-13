@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ashroy</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Ashroy-Pro</h1>
+            <p>Your AI-powered chat assistant</p>
+        </header>
+
+        <div class="chat-section">
+            <h2>Chat with AI</h2>
+            <div class="input-group">
+                <input type="text" id="query" name="query" placeholder="Type your query here..." required>
+                <button onclick="sendQuery()">Send</button>
+            </div>
+            <div id="chatResponse" class="response-box"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const queryInput = document.getElementById('query');
+            const chatResponse = document.getElementById('chatResponse');
+
+            window.sendQuery = async () => {
+                chatResponse.textContent = "Fetching Response...";
+                const query = queryInput.value;
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ query })
+                    });
+                    const data = await response.json();
+                    chatResponse.innerHTML = `<p><strong>You:</strong> ${query}</p><p><strong>AI:</strong> ${data.message.content}</p>`;
+                } catch (error) {
+                    console.error('Error sending query:', error);
+                    chatResponse.innerHTML = `<p class="error">Error fetching response. Please try again.</p>`;
+                }
+            };
+        });
+    </script>
+</body>
+</html>

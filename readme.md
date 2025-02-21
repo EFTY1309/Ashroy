@@ -112,5 +112,5 @@ graph TD
 
 ## Contact 📧
 
-- Email: bsse1303@iit.du.ac.bd
-- GitHub: 2753Farhan
+- Email: bsse1309@iit.du.ac.bd
+
